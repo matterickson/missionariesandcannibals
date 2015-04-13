@@ -20,12 +20,6 @@ public class MissionariesAndCannibals {
 		} else {
 			//Starts in a valid state: Let's try to solve the puzzle
 			while(!state.compareTo(goalState) && !noSolution){
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				if(state.boat == 0){
 					//We're on the left side, so now we can try moving different people right
 					pastStates.add(state);
