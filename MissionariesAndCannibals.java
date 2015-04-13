@@ -1,18 +1,16 @@
-package a1;
-
 import java.util.ArrayList;
 
 public class MissionariesAndCannibals {
 
 	public static void main(String[] args) {
-		int m = 3;
-		int n = 2;
+		int m = 3; //number of missionaries and cannibals
+		int n = 2; //number of people per boat
 		
 		ArrayList<State> pastStates = new ArrayList<State>();
 		ArrayList<State> visitedStates = new ArrayList<State>();
 		
-		State start = new State(m, m, 0, 0, 0, n);
-		State goalState = new State(0, 0, 1, m, m, n);
+		State start = new State(m, m, 0, 0, 0);
+		State goalState = new State(0, 0, 1, m, m);
 		State state = start;
 		
 		boolean noSolution = false;
@@ -22,31 +20,29 @@ public class MissionariesAndCannibals {
 		} else {
 			//Starts in a valid state: Let's try to solve the puzzle
 			while(!state.compareTo(goalState) && !noSolution){
-				if(state.b.side == 0){
-					/* We're on the left side, so now we can try the five moves,
-					 * 1. Move one missionary right
-					 * 2. Move two missionaries right
-					 * 3. Move one missionary, one cannibal right
-					 * 4. Move two cannibals right
-					 * 5. Move one cannibal right */
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(state.boat == 0){
+					//We're on the left side, so now we can try moving different people right
 					pastStates.add(state);
 					visitedStates.add(state);
-					if (checkIfValid(new State(state.m_l-1, state.c_l, 1, state.m_r+1, state.c_r, n), visitedStates)){
-						state = new State(state.m_l-1, state.c_l, 1, state.m_r+1, state.c_r, n);
-						System.out.println("Moving 1 M");
-					} else if (checkIfValid(new State(state.m_l-2, state.c_l, 1, state.m_r+2, state.c_r, n), visitedStates)){
-						state = new State(state.m_l-2, state.c_l, 1, state.m_r+2, state.c_r, n);
-						System.out.println("Moving 2 M");
-					} else if (checkIfValid(new State(state.m_l-1, state.c_l-1, 1, state.m_r+1, state.c_r+1, n), visitedStates)){
-						state = new State(state.m_l-1, state.c_l-1, 1, state.m_r+1, state.c_r+1, n);
-						System.out.println("Moving 1 M 1 C");
-					} else if (checkIfValid(new State(state.m_l, state.c_l-2, 1, state.m_r, state.c_r+2, n), visitedStates)){
-						state = new State(state.m_l, state.c_l-2, 1, state.m_r, state.c_r+2, n);
-						System.out.println("Moving 2 C");
-					} else if (checkIfValid(new State(state.m_l, state.c_l-1, 1, state.m_r, state.c_r+1, n), visitedStates)){
-						state = new State(state.m_l, state.c_l-1, 1, state.m_r, state.c_r+1, n);
-						System.out.println("Moving 1 C"); 
-					} else {
+					boolean moved = false;
+					for(int i = 0; i <= n && !moved; i++){
+						for(int j = n-i; j >= 0 && !moved; j--){
+							if(i + j != 0){
+								if(checkIfValid(new State(state.m_l-i, state.c_l-j, 1, state.m_r+i, state.c_r+j), visitedStates)){
+									state = new State(state.m_l-i, state.c_l-j, 1, state.m_r+i, state.c_r+j);
+									System.out.println("Moving " + i + " M " + j + " C");
+									moved = true;
+								}	
+							}
+						}
+					}
+					if(!moved){
 						System.out.println("No states were valid.  Returning to previous route");
 						pastStates.remove(state);
 						if(pastStates.size() > 0){
@@ -54,32 +50,24 @@ public class MissionariesAndCannibals {
 						} else {
 							noSolution = true;
 						}
-					}					
+					}		
 				}else{
-					/* We're on the right side, so now we can try the five moves,
-					 * 1. Move one missionary right
-					 * 2. Move two missionaries right
-					 * 3. Move one missionary, one cannibal right
-					 * 4. Move two cannibals right
-					 * 5. Move one cannibal right */
+					//We're on the right side, so now we can try moving different people left
 					pastStates.add(state);
 					visitedStates.add(state);
-					if (checkIfValid(new State(state.m_l+1, state.c_l, 0, state.m_r-1, state.c_r, n), visitedStates)){
-						state = new State(state.m_l+1, state.c_l, 0, state.m_r-1, state.c_r, n);
-						System.out.println("Moving 1 M");
-					} else if (checkIfValid(new State(state.m_l+2, state.c_l, 0, state.m_r-2, state.c_r, n), visitedStates)){
-						state = new State(state.m_l+2, state.c_l, 0, state.m_r-2, state.c_r, n);
-						System.out.println("Moving 2 M");
-					} else if (checkIfValid(new State(state.m_l+1, state.c_l+1, 0, state.m_r-1, state.c_r-1, n), visitedStates)){
-						state = new State(state.m_l+1, state.c_l+1, 0, state.m_r-1, state.c_r-1, n);
-						System.out.println("Moving 1 M 1 C");
-					} else if (checkIfValid(new State(state.m_l, state.c_l+2, 0, state.m_r, state.c_r-2, n), visitedStates)){
-						state = new State(state.m_l, state.c_l+2, 0, state.m_r, state.c_r-2, n);
-						System.out.println("Moving 2 C");
-					} else if (checkIfValid(new State(state.m_l, state.c_l+1, 0, state.m_r, state.c_r-1, n), visitedStates)){
-						state = new State(state.m_l, state.c_l+1, 0, state.m_r, state.c_r-1, n);
-						System.out.println("Moving 1 C");
-					} else {
+					boolean moved = false;
+					for(int i = 0; i <= n && !moved; i++){
+						for(int j = n-i; j >= 0 && !moved; j--){
+							if(i + j != 0){
+								if(checkIfValid(new State(state.m_l+i, state.c_l+j, 0, state.m_r-i, state.c_r-j), visitedStates)){
+									state = new State(state.m_l+i, state.c_l+j, 0, state.m_r-i, state.c_r-j);
+									System.out.println("Moving " + i + " M " + j + " C");
+									moved = true;
+								}	
+							}
+						}
+					}
+					if(!moved){
 						System.out.println("No states were valid.  Returning to previous route");
 						pastStates.remove(state);
 						if(pastStates.size() > 0){
@@ -99,7 +87,8 @@ public class MissionariesAndCannibals {
 		}
 	}
 	
-	static boolean checkIfValid(State testState, ArrayList<State> v){
+	//check if the new state is okay to try
+	public static boolean checkIfValid(State testState, ArrayList<State> v){
 		boolean alreadyDone = false;
 		for(int i = 0; i < v.size(); i++){
 			if (v.get(i).compareTo(testState)){
@@ -116,28 +105,25 @@ public class MissionariesAndCannibals {
 		return false;
 	}
 	
-	static class State {
+	public static class State {
 		//number of missionaries and cannibals on the left and right sides
-		//b stands for boat, 0 means left, 1 means right
-		int m_l, c_l, m_r, c_r;
-		Boat b;
+		//for boat: 0 means left, 1 means right
+		int m_l, c_l, m_r, c_r, boat;
 		
-		public State(int ml, int cl, int b, int mr, int cr, int n){
-			m_l = ml;
-			c_l = cl;
-			m_r = mr;
-			c_r = cr;
-			this.b = new Boat(n, b);
+		public State(int ml, int cl, int b, int mr, int cr){
+			m_l = ml; //missionaries on left
+			c_l = cl; //cannibals on left
+			m_r = mr; //missionaries on right
+			c_r = cr; //cannibals n right
+			boat = b;
 		}
 
 		public boolean compareTo(State that) {
-			//With this implementation, 1 means they are the same 
-			//and -1 means they are not
 			if (this.m_l == that.m_l &&
 					this.c_l == that.c_l &&
 					this.m_r == that.m_r &&
 					this.c_r == that.c_r &&
-					this.b.side == that.b.side){
+					this.boat == that.boat){
 				return true;
 			}
 			return false;
@@ -145,7 +131,7 @@ public class MissionariesAndCannibals {
 		
 		@Override
 		public String toString(){
-			if (b.side == 0){
+			if (boat == 0){
 				return m_l+" m "+m_r+"\n"
 						+c_l+" c "+c_r+"\n"
 						+"1 b 0\n\n";
@@ -156,13 +142,4 @@ public class MissionariesAndCannibals {
 			}
 		}
 	}
-	
-	static class Boat{
-		int capacity;
-		int side;  //0 means left side, 1 means right side
-		public Boat(int c, int s){
-			this.capacity = c;
-			this.side = s;
-		}
-	}	
 }
